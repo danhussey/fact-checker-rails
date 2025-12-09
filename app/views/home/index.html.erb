@@ -1,0 +1,20 @@
+<div class="flex flex-col items-center justify-center min-h-screen p-4">
+  <h1 class="text-4xl font-bold mb-8">Fact Check</h1>
+  <p class="text-zinc-400 mb-8 text-center max-w-md">
+    Real-time fact-checking powered by AI. Start listening to verify claims as they're spoken.
+  </p>
+
+  <% if @session %>
+    <%= link_to "Continue Session", listening_session_path(@session),
+        class: "px-8 py-4 bg-zinc-800 hover:bg-zinc-700 rounded-full text-lg font-medium transition-colors" %>
+  <% else %>
+    <%= button_to "Start New Session", listening_sessions_path,
+        method: :post,
+        class: "px-8 py-4 bg-white text-black hover:bg-zinc-200 rounded-full text-lg font-medium transition-colors" %>
+  <% end %>
+
+  <footer class="absolute bottom-4 text-center">
+    <%= link_to "Privacy Policy", privacy_path, class: "text-zinc-500 hover:text-zinc-400 text-sm" %>
+    <p class="text-zinc-600 text-xs mt-2">AI-powered fact-checking. Results may contain errors.</p>
+  </footer>
+</div>

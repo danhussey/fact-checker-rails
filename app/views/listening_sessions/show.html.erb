@@ -1,0 +1,65 @@
+<%= turbo_stream_from @session %>
+
+<div class="min-h-screen flex flex-col"
+     data-controller="streaming-transcription"
+     data-streaming-transcription-session-token-value="<%= @session.session_token %>">
+
+  <%# Header %>
+  <header class="p-4 flex justify-between items-center border-b border-zinc-800">
+    <h1 class="text-xl font-bold">Fact Check</h1>
+
+    <div class="flex items-center gap-4">
+      <%# Recording toggle %>
+      <button onclick="fetch('<%= toggle_recording_listening_session_path(@session) %>', {method: 'POST', headers: {'X-CSRF-Token': document.querySelector('[name=csrf-token]').content}}).then(() => this.classList.toggle('text-red-500'))"
+              class="text-sm <%= @session.recording_enabled? ? 'text-red-500' : 'text-zinc-500' %> hover:text-zinc-300"
+              title="Toggle session recording for dev export">
+        <span class="inline-block w-2 h-2 rounded-full <%= @session.recording_enabled? ? 'bg-red-500' : 'bg-zinc-600' %> mr-1"></span>
+        REC
+      </button>
+
+      <%# Listen button %>
+      <button data-streaming-transcription-target="button"
+              data-action="click->streaming-transcription#toggle"
+              class="px-6 py-2 rounded-full bg-zinc-800 hover:bg-zinc-700 font-medium transition-colors">
+        <span data-streaming-transcription-target="buttonText">Start Listening</span>
+      </button>
+    </div>
+  </header>
+
+  <%# Error banner %>
+  <div data-streaming-transcription-target="error"
+       class="hidden bg-red-900/50 border border-red-800 text-red-200 px-4 py-2 text-sm">
+  </div>
+
+  <%# Live transcript %>
+  <div class="px-4 py-3 bg-zinc-900/50 border-b border-zinc-800 min-h-[60px]">
+    <div class="text-zinc-500 text-sm mb-1">Live transcript</div>
+    <div data-streaming-transcription-target="transcript"
+         class="text-zinc-300 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide">
+      <span class="text-zinc-600 italic">Waiting for speech...</span>
+    </div>
+    <div data-streaming-transcription-target="partialText"
+         class="hidden text-zinc-500 text-sm italic mt-1">
+    </div>
+  </div>
+
+  <%# Fact checks list %>
+  <div class="flex-1 overflow-y-auto p-4">
+    <div id="fact_checks" class="space-y-4">
+      <%= render @fact_checks %>
+    </div>
+
+    <% if @fact_checks.empty? %>
+      <div class="text-center text-zinc-600 py-12">
+        <p>No fact checks yet.</p>
+        <p class="text-sm mt-2">Start listening to check claims in real-time.</p>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Footer %>
+  <footer class="p-4 text-center border-t border-zinc-800">
+    <%= link_to "Privacy Policy", privacy_path, class: "text-zinc-500 hover:text-zinc-400 text-sm" %>
+    <p class="text-zinc-600 text-xs mt-1">AI-powered fact-checking. Results may contain errors.</p>
+  </footer>
+</div>

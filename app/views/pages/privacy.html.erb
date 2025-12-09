@@ -1,0 +1,45 @@
+<div class="max-w-2xl mx-auto p-6">
+  <h1 class="text-3xl font-bold mb-6">Privacy Policy</h1>
+
+  <div class="space-y-6 text-zinc-300">
+    <section>
+      <h2 class="text-xl font-semibold text-white mb-2">How Your Data is Processed</h2>
+      <p>When you use Fact Check, your audio is processed as follows:</p>
+      <ul class="list-disc list-inside mt-2 space-y-1 text-zinc-400">
+        <li>Audio is streamed to Deepgram for real-time transcription</li>
+        <li>Transcribed text is sent to xAI (Grok) for claim extraction and fact-checking</li>
+        <li>Results are displayed in your browser</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold text-white mb-2">Data Storage</h2>
+      <p>By default, your session data is not stored permanently. However:</p>
+      <ul class="list-disc list-inside mt-2 space-y-1 text-zinc-400">
+        <li>If you enable recording (REC button), transcripts and fact checks are saved for developer analysis</li>
+        <li>No raw audio is ever stored</li>
+        <li>IP addresses are hashed for rate limiting only</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold text-white mb-2">Third-Party Services</h2>
+      <p>This app uses the following third-party services:</p>
+      <ul class="list-disc list-inside mt-2 space-y-1 text-zinc-400">
+        <li><a href="https://deepgram.com/privacy" class="text-blue-400 hover:underline" target="_blank" rel="noopener">Deepgram</a> - Speech-to-text transcription</li>
+        <li><a href="https://x.ai/legal/privacy-policy" class="text-blue-400 hover:underline" target="_blank" rel="noopener">xAI</a> - Claim extraction and fact-checking</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold text-white mb-2">No Cookies or Tracking</h2>
+      <p class="text-zinc-400">
+        We do not use analytics cookies or tracking pixels. The only cookie stored is an encrypted session identifier.
+      </p>
+    </section>
+  </div>
+
+  <div class="mt-8">
+    <%= link_to "← Back", :back, class: "text-zinc-500 hover:text-zinc-400" %>
+  </div>
+</div>
