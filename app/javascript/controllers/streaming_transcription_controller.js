@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 import consumer from "channels/consumer"
 
 export default class extends Controller {
-  static targets = ["button", "buttonText", "transcript", "partialText", "error"]
+  static targets = ["button", "buttonText", "transcript", "partialText", "error", "liveIndicator", "micIcon", "recordingDot"]
   static values = { sessionToken: String }
 
   connect() {
@@ -147,7 +147,7 @@ export default class extends Controller {
     if (this.hasTranscriptTarget) {
       const span = document.createElement("span")
       span.textContent = text + " "
-      span.classList.add("animate-fade-in")
+      span.classList.add("animate-fade-up")
       this.transcriptTarget.appendChild(span)
 
       // Keep only last ~500 chars visible
@@ -192,16 +192,26 @@ export default class extends Controller {
   updateUI() {
     if (this.hasButtonTarget) {
       if (this.isListening) {
-        this.buttonTarget.classList.add("bg-red-600", "hover:bg-red-700")
-        this.buttonTarget.classList.remove("bg-zinc-800", "hover:bg-zinc-700")
+        this.buttonTarget.classList.add("btn-listening")
       } else {
-        this.buttonTarget.classList.remove("bg-red-600", "hover:bg-red-700")
-        this.buttonTarget.classList.add("bg-zinc-800", "hover:bg-zinc-700")
+        this.buttonTarget.classList.remove("btn-listening")
       }
     }
 
     if (this.hasButtonTextTarget) {
-      this.buttonTextTarget.textContent = this.isListening ? "Stop Listening" : "Start Listening"
+      this.buttonTextTarget.textContent = this.isListening ? "Stop" : "Start Listening"
+    }
+
+    // Toggle mic icon / recording dot
+    if (this.hasMicIconTarget) {
+      this.micIconTarget.classList.toggle("hidden", this.isListening)
+    }
+    if (this.hasRecordingDotTarget) {
+      this.recordingDotTarget.classList.toggle("hidden", !this.isListening)
+    }
+
+    if (this.hasLiveIndicatorTarget) {
+      this.liveIndicatorTarget.classList.toggle("hidden", !this.isListening)
     }
   }
 

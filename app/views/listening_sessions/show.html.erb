@@ -4,23 +4,39 @@
      data-controller="streaming-transcription"
      data-streaming-transcription-session-token-value="<%= @session.session_token %>">
 
-  <%# Header %>
-  <header class="p-4 flex justify-between items-center border-b border-zinc-800">
-    <h1 class="text-xl font-bold">Fact Check</h1>
+  <%# Sticky header with glass effect %>
+  <header class="sticky top-0 z-50 px-4 py-2.5 flex justify-between items-center border-b border-border-subtle backdrop-blur-xl bg-deep/80">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-elevated border border-border-subtle flex items-center justify-center">
+        <svg class="w-3.5 h-3.5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h1 class="text-base font-display font-semibold">Fact Check</h1>
+    </div>
 
-    <div class="flex items-center gap-4">
-      <%# Recording toggle %>
-      <button onclick="fetch('<%= toggle_recording_listening_session_path(@session) %>', {method: 'POST', headers: {'X-CSRF-Token': document.querySelector('[name=csrf-token]').content}}).then(() => this.classList.toggle('text-red-500'))"
-              class="text-sm <%= @session.recording_enabled? ? 'text-red-500' : 'text-zinc-500' %> hover:text-zinc-300"
-              title="Toggle session recording for dev export">
-        <span class="inline-block w-2 h-2 rounded-full <%= @session.recording_enabled? ? 'bg-red-500' : 'bg-zinc-600' %> mr-1"></span>
-        REC
-      </button>
+    <div class="flex items-center gap-2">
+      <%# Clear button %>
+      <%= button_to clear_checks_listening_session_path(@session),
+          method: :delete,
+          class: "p-1.5 rounded text-muted hover:text-secondary hover:bg-surface transition-colors",
+          title: "Clear session",
+          data: { turbo_confirm: "Clear all fact checks?" } do %>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+        </svg>
+      <% end %>
 
-      <%# Listen button %>
+      <%# Listen button with state icon %>
       <button data-streaming-transcription-target="button"
               data-action="click->streaming-transcription#toggle"
-              class="px-6 py-2 rounded-full bg-zinc-800 hover:bg-zinc-700 font-medium transition-colors">
+              class="btn text-sm px-4 py-1.5 inline-flex items-center gap-2">
+        <%# Mic icon (idle state) %>
+        <svg data-streaming-transcription-target="micIcon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+        </svg>
+        <%# Recording indicator (listening state) %>
+        <span data-streaming-transcription-target="recordingDot" class="hidden w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
         <span data-streaming-transcription-target="buttonText">Start Listening</span>
       </button>
     </div>
@@ -28,38 +44,48 @@
 
   <%# Error banner %>
   <div data-streaming-transcription-target="error"
-       class="hidden bg-red-900/50 border border-red-800 text-red-200 px-4 py-2 text-sm">
+       class="hidden bg-red-500/10 border-b border-red-500/30 text-red-300 px-4 py-2 text-sm">
   </div>
 
-  <%# Live transcript %>
-  <div class="px-4 py-3 bg-zinc-900/50 border-b border-zinc-800 min-h-[60px]">
-    <div class="text-zinc-500 text-sm mb-1">Live transcript</div>
+  <%# Live transcript area %>
+  <div class="px-4 py-3 bg-elevated/30 border-b border-border-subtle">
+    <div class="flex items-center gap-2 mb-1.5">
+      <span class="font-mono text-[10px] text-muted uppercase tracking-wider">Live Transcript</span>
+      <span data-streaming-transcription-target="liveIndicator"
+            class="hidden w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse-glow"></span>
+    </div>
     <div data-streaming-transcription-target="transcript"
-         class="text-zinc-300 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide">
-      <span id="transcript_placeholder" class="text-zinc-600 italic">Waiting for speech...</span>
+         class="text-secondary text-sm leading-relaxed overflow-x-auto whitespace-nowrap scrollbar-hide">
+      <span id="transcript_placeholder" class="text-muted italic">Waiting for speech...</span>
     </div>
     <div data-streaming-transcription-target="partialText"
-         class="hidden text-zinc-500 text-sm italic mt-1">
+         class="hidden text-tertiary text-sm italic mt-1">
     </div>
   </div>
 
   <%# Fact checks list %>
-  <div class="flex-1 overflow-y-auto p-4">
-    <div id="fact_checks" class="space-y-4">
-      <%= render @fact_checks %>
-    </div>
-
-    <% if @fact_checks.empty? %>
-      <div class="text-center text-zinc-600 py-12">
-        <p>No fact checks yet.</p>
-        <p class="text-sm mt-2">Start listening to check claims in real-time.</p>
+  <div class="flex-1 overflow-y-auto">
+    <div class="px-4 py-4">
+      <div id="fact_checks" class="space-y-4">
+        <%= render @fact_checks %>
       </div>
-    <% end %>
+
+      <% if @fact_checks.empty? %>
+        <div id="empty_state" class="text-center py-12">
+          <div class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-elevated border border-border-subtle mb-3">
+            <svg class="w-5 h-5 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+            </svg>
+          </div>
+          <p class="text-secondary text-sm font-medium">No fact checks yet</p>
+          <p class="text-muted text-xs mt-1">Start listening to verify claims in real-time.</p>
+        </div>
+      <% end %>
+    </div>
   </div>
 
   <%# Footer %>
-  <footer class="p-4 text-center border-t border-zinc-800">
-    <%= link_to "Privacy Policy", privacy_path, class: "text-zinc-500 hover:text-zinc-400 text-sm" %>
-    <p class="text-zinc-600 text-xs mt-1">AI-powered fact-checking. Results may contain errors.</p>
+  <footer class="px-4 py-3 text-center border-t border-border-subtle">
+    <%= link_to "Privacy Policy", privacy_path, class: "text-muted hover:text-tertiary text-xs transition-colors" %>
   </footer>
 </div>

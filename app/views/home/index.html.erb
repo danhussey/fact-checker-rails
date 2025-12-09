@@ -1,20 +1,48 @@
-<div class="flex flex-col items-center justify-center min-h-screen p-4">
-  <h1 class="text-4xl font-bold mb-8">Fact Check</h1>
-  <p class="text-zinc-400 mb-8 text-center max-w-md">
-    Real-time fact-checking powered by AI. Start listening to verify claims as they're spoken.
-  </p>
+<div class="flex flex-col items-center justify-center min-h-screen p-6">
+  <div class="text-center max-w-lg">
+    <%# Logo mark %>
+    <div class="mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-elevated border border-border-subtle">
+        <svg class="w-8 h-8 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+    </div>
 
-  <% if @session %>
-    <%= link_to "Continue Session", listening_session_path(@session),
-        class: "px-8 py-4 bg-zinc-800 hover:bg-zinc-700 rounded-full text-lg font-medium transition-colors" %>
-  <% else %>
-    <%= button_to "Start New Session", listening_sessions_path,
-        method: :post,
-        class: "px-8 py-4 bg-white text-black hover:bg-zinc-200 rounded-full text-lg font-medium transition-colors" %>
-  <% end %>
+    <%# Title %>
+    <h1 class="text-5xl font-display font-bold tracking-tight mb-4">
+      Fact Check
+    </h1>
 
-  <footer class="absolute bottom-4 text-center">
-    <%= link_to "Privacy Policy", privacy_path, class: "text-zinc-500 hover:text-zinc-400 text-sm" %>
-    <p class="text-zinc-600 text-xs mt-2">AI-powered fact-checking. Results may contain errors.</p>
+    <%# Tagline %>
+    <p class="text-secondary text-lg leading-relaxed mb-10">
+      Real-time fact-checking powered by AI.<br class="hidden sm:block">
+      Start listening to verify claims as they're spoken.
+    </p>
+
+    <%# CTA Button %>
+    <% if @session %>
+      <%= link_to listening_session_path(@session),
+          class: "btn btn-lg inline-flex items-center gap-2" do %>
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+        </svg>
+        Continue Session
+      <% end %>
+    <% else %>
+      <%= button_to listening_sessions_path, method: :post,
+          class: "btn btn-lg inline-flex items-center gap-2" do %>
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+        </svg>
+        Start Listening
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Footer %>
+  <footer class="absolute bottom-6 text-center">
+    <%= link_to "Privacy Policy", privacy_path, class: "text-tertiary hover:text-secondary text-sm transition-colors" %>
+    <p class="text-muted text-xs mt-2">AI-powered fact-checking. Results may contain errors.</p>
   </footer>
 </div>

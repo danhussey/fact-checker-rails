@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :listening_sessions, only: [:create, :show] do
     member do
       post :toggle_recording
+      delete :clear_checks
     end
   end
 

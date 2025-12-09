@@ -75,7 +75,7 @@ class FactCheckService
 
   def normalize_result(result)
     {
-      verdict: result["verdict"] || "unverified",
+      verdict: (result["verdict"] || "unverified").to_s.downcase.gsub(" ", "_"),
       confidence: result["confidence"]&.to_i&.clamp(1, 4) || 1,
       whats_true: Array(result["whats_true"]).first(2),
       whats_wrong: Array(result["whats_wrong"]).first(2),

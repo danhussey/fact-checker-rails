@@ -1,5 +1,5 @@
 class ListeningSessionsController < ApplicationController
-  before_action :set_session, only: [:show, :toggle_recording]
+  before_action :set_session, only: [:show, :toggle_recording, :clear_checks]
 
   def create
     @session = ListeningSession.create!
@@ -23,6 +23,12 @@ class ListeningSessionsController < ApplicationController
     end
 
     head :ok
+  end
+
+  def clear_checks
+    @session.fact_checks.destroy_all
+    @session.transcript_chunks.destroy_all
+    redirect_to @session, notice: "Session cleared"
   end
 
   private

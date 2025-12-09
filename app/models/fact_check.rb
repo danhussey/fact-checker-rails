@@ -21,8 +21,15 @@ class FactCheck < ApplicationRecord
   scope :completed, -> { where(status: "completed") }
 
   # Broadcast updates to the session
-  after_create_commit -> { broadcast_append_to listening_session, target: "fact_checks" }
+  after_create_commit :broadcast_creation
   after_update_commit -> { broadcast_replace_to listening_session }
+
+  def broadcast_creation
+    # Remove empty state if this is the first fact check
+    broadcast_remove_to listening_session, target: "empty_state"
+    # Prepend new fact check at top
+    broadcast_prepend_to listening_session, target: "fact_checks"
+  end
 
   def verdict_label
     case verdict
