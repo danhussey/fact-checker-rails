@@ -5,12 +5,13 @@ class DeepgramConnection
 
   QUERY_PARAMS = {
     model: "nova-2",
-    language: "en",
+    language: "en-AU",
     punctuate: "true",
     smart_format: "true",
     interim_results: "true",
-    utterances: "true",
+    utterance_end_ms: "1500",
     vad_events: "true",
+    endpointing: "300",
     encoding: "linear16",
     sample_rate: "16000"
   }.freeze
@@ -36,7 +37,7 @@ class DeepgramConnection
     setup_handlers
     @connected = true
 
-    Rails.logger.info "[Deepgram] Connection initiated"
+    Rails.logger.debug "[Deepgram] Connecting..."
   rescue => e
     Rails.logger.error "[Deepgram] Connection failed: #{e.message}"
     @on_error.call(e.message)
@@ -54,7 +55,7 @@ class DeepgramConnection
   def close
     @connected = false
     @socket&.close
-    Rails.logger.info "[Deepgram] Connection closed"
+    Rails.logger.debug "[Deepgram] Closed"
   rescue => e
     Rails.logger.error "[Deepgram] Close failed: #{e.message}"
   end
@@ -73,7 +74,7 @@ class DeepgramConnection
     end
 
     @socket.on :open do
-      Rails.logger.info "[Deepgram] WebSocket opened"
+      Rails.logger.debug "[Deepgram] Connected"
     end
 
     @socket.on :error do |e|
@@ -82,7 +83,7 @@ class DeepgramConnection
     end
 
     @socket.on :close do |e|
-      Rails.logger.info "[Deepgram] WebSocket closed: #{e&.code}"
+      Rails.logger.debug "[Deepgram] Disconnected"
       connection.instance_variable_set(:@connected, false)
     end
   end

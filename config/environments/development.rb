@@ -46,20 +46,14 @@ Rails.application.configure do
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
 
-  # Highlight code that triggered database queries in logs.
-  config.active_record.verbose_query_logs = true
+  # Reduce log noise for streaming app
+  config.active_record.verbose_query_logs = false
+  config.active_record.query_log_tags_enabled = false
+  config.active_job.verbose_enqueue_logs = false
+  config.action_view.annotate_rendered_view_with_filenames = false
 
-  # Append comments with runtime information tags to SQL queries in logs.
-  config.active_record.query_log_tags_enabled = true
-
-  # Highlight code that enqueued background job in logs.
-  config.active_job.verbose_enqueue_logs = true
-
-  # Raises error for missing translations.
-  # config.i18n.raise_on_missing_translations = true
-
-  # Annotate rendered view with file names.
-  config.action_view.annotate_rendered_view_with_filenames = true
+  # Suppress Action Cable logs (partial transcripts, turbo streams)
+  config.action_cable.logger = ActiveSupport::Logger.new(nil)
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true

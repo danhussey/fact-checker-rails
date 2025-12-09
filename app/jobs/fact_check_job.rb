@@ -31,7 +31,7 @@ class FactCheckJob < ApplicationJob
       sources: result[:sources]
     )
 
-    Rails.logger.info "[FactCheck] Completed: #{fact_check.claim.truncate(50)} → #{result[:verdict]}"
+    Rails.logger.info "[FactCheck] #{result[:verdict].to_s.upcase}: #{fact_check.claim.truncate(60)}"
   rescue => e
     Rails.logger.error "[FactCheck] Failed: #{e.message}"
     fact_check.update!(

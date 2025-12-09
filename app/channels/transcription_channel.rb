@@ -13,7 +13,7 @@ class TranscriptionChannel < ApplicationCable::Channel
     @deepgram.connect!
 
     @session.update!(status: :listening)
-    Rails.logger.info "[Transcription] Session #{@session.id} started listening"
+    Rails.logger.info "[Session #{@session.id}] Listening started"
   rescue ActiveRecord::RecordNotFound
     reject
   end
@@ -31,7 +31,7 @@ class TranscriptionChannel < ApplicationCable::Channel
     @deepgram&.close
     @session&.update!(status: :idle)
 
-    Rails.logger.info "[Transcription] Session #{@session&.id} stopped listening"
+    Rails.logger.info "[Session #{@session&.id}] Listening stopped"
   end
 
   private
@@ -63,7 +63,6 @@ class TranscriptionChannel < ApplicationCable::Channel
   end
 
   def handle_utterance_end
-    # Trigger claim extraction when speaker pauses
     ExtractClaimsJob.perform_later(session_id: @session.id)
   end
 

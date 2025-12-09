@@ -11,6 +11,7 @@ class TranscriptChunk < ApplicationRecord
   def broadcast_to_session
     return unless is_final?
 
+    broadcast_remove_to(listening_session, target: "transcript_placeholder")
     broadcast_append_to(
       listening_session,
       target: "transcript",

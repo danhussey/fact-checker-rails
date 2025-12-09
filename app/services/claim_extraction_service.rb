@@ -36,20 +36,19 @@ class ClaimExtractionService
     checked_list = checked_claims.any? ? checked_claims.join("\n- ") : "(none yet)"
 
     <<~PROMPT
-      You are a claim extractor for a real-time fact-checking system. Extract factual claims that can be verified from the transcript.
+      Extract factual claims from this live transcript for fact-checking.
 
       Return JSON: { "claims": ["claim 1", "claim 2"] }
 
-      Rules:
-      - Only extract VERIFIABLE factual claims (statistics, dates, events, quotes)
-      - Do NOT extract opinions, predictions, or subjective statements
-      - Include specific numbers, percentages, dates when mentioned
-      - Resolve pronouns using context (e.g., "He said..." → identify who)
-      - Each claim should be a complete, standalone statement
-      - Return empty array if no new verifiable claims found
-      - Maximum 3 claims per extraction
+      Guidelines:
+      - Extract statements that can be verified as true or false
+      - Include claims about: statistics, geography, history, science, comparisons, quotes
+      - Combine fragmented sentences into complete claims (e.g., "Russia." + "Is in America." → "Russia is in America")
+      - Rephrase for clarity while preserving meaning
+      - Skip opinions and predictions
+      - Maximum 3 new claims
 
-      Already checked (skip similar claims):
+      Already checked (skip these):
       - #{checked_list}
     PROMPT
   end

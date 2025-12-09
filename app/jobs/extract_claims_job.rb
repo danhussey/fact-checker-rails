@@ -17,14 +17,11 @@ class ExtractClaimsJob < ApplicationJob
       checked_claims: checked_claims
     )
 
-    Rails.logger.info "[ExtractClaims] Found #{claims.size} potential claims"
+    return if claims.empty?
+    Rails.logger.info "[Claims] Extracted #{claims.size}: #{claims.map { |c| c.truncate(40) }.join(' | ')}"
 
     claims.each do |claim|
-      # Skip if too similar to existing claims
-      if DuplicateDetector.similar?(claim, checked_claims)
-        Rails.logger.debug "[ExtractClaims] Skipping duplicate: #{claim.truncate(50)}"
-        next
-      end
+      next if DuplicateDetector.similar?(claim, checked_claims)
 
       # Create fact check record
       fact_check = session.fact_checks.create!(
